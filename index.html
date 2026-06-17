@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fofuxinha, feliz aniversário!</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-wrap display-page">
+    <header class="hero">
+      <div class="hero-content">
+        <p class="date">17 de junho de 2026</p>
+        <h1>Para minha Fofuxinha</h1>
+        <p>O vídeo está aqui, feito com todo carinho para a aniversariante mais linda e especial.</p>
+      </div>
+    </header>
+
+    <main>
+      <section class="video-section">
+        <div class="video-box">
+          <video id="story-video" class="montagem-video" controls autoplay playsinline loop>
+            <source src="video//Video Project 1.mp4" type="video/mp4" />
+            Seu navegador não suporta reprodução de vídeo.
+          </video>
+          <p class="video-caption">Amor, que cada cena te faça sorrir como você me faz sorrir. 💜</p>
+          <button id="download-video-button" class="video-link secondary" type="button">Baixar vídeo</button>
+          <p class="video-hint">Toque no vídeo para tela cheia.</p>
+        </div>
+      </section>
+
+      <section class="message-card">
+        <h2>Um presente cheio de carinho</h2>
+        <p>Esse vídeo reuniu nossos melhores momentos para celebrar o seu dia. Você é meu sonho, minha alegria e meu amor eterno.</p>
+        <ul>
+          <li>Você me chama de Love, e eu te chamo de tudo de mais bonito.</li>
+          <li>Você é a razão de cada sorriso meu.</li>
+          <li>Hoje é seu dia, e quero que ele seja mágico.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>Te amo muito, seu amor 💖</p>
+      <p>Slk te amo muito porraaa!</p>
+    </footer>
+  </div>
+
+  <script>
+    const storyVideo = document.getElementById('story-video');
+    const downloadVideoButton = document.getElementById('download-video-button');
+
+    if (storyVideo) {
+      storyVideo.addEventListener('click', () => {
+        if (document.fullscreenElement) return;
+        if (storyVideo.requestFullscreen) {
+          storyVideo.requestFullscreen();
+        } else if (storyVideo.webkitRequestFullscreen) {
+          storyVideo.webkitRequestFullscreen();
+        }
+      });
+    }
+
+    if (downloadVideoButton) {
+      downloadVideoButton.addEventListener('click', () => {
+        const source = storyVideo.querySelector('source');
+        const href = source ? source.src : storyVideo.currentSrc;
+        const link = document.createElement('a');
+        link.href = href;
+        link.download = 'meu-video-story.mp4';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      });
+    }
+
+    if (storyVideo) {
+      storyVideo.volume = 0.6;
+      storyVideo.muted = false;
+      storyVideo.addEventListener('play', () => {
+        storyVideo.volume = 0.6;
+      });
+      storyVideo.addEventListener('loadedmetadata', async () => {
+        try {
+          await storyVideo.play();
+        } catch (error) {
+          console.warn('Autoplay bloqueado:', error);
+        }
+      });
+    }
+  </script>
+</body>
+</html>
