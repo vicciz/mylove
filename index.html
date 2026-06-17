@@ -29,6 +29,11 @@
         </div>
       </section>
 
+      <!-- Contagem regressiva overlay -->
+      <div id="countdown-overlay" class="countdown-overlay" hidden>
+        <div class="countdown-number">3</div>
+      </div>
+
       <section class="message-card">
         <h2>Um presente cheio de carinho</h2>
         <p>Esse vídeo reuniu nossos melhores momentos para celebrar o seu dia. Você é meu sonho, minha alegria e meu amor eterno.</p>
@@ -49,6 +54,8 @@
   <script>
     const storyVideo = document.getElementById('story-video');
     const downloadVideoButton = document.getElementById('download-video-button');
+  const countdownOverlay = document.getElementById('countdown-overlay');
+  const countdownNumber = countdownOverlay ? countdownOverlay.querySelector('.countdown-number') : null;
 
     if (storyVideo) {
       storyVideo.addEventListener('click', () => {
@@ -74,11 +81,50 @@
       });
     }
 
+    function showCountdown(seconds) {
+      return new Promise(resolve => {
+        if (!countdownOverlay || !countdownNumber) return resolve();
+        let s = seconds;
+        countdownNumber.textContent = s;
+        countdownOverlay.hidden = false;
+        countdownOverlay.style.display = 'flex';
+        const interval = setInterval(() => {
+          s -= 1;
+          if (s <= 0) {
+            clearInterval(interval);
+            countdownOverlay.hidden = true;
+            countdownOverlay.style.display = 'none';
+            resolve();
+          } else {
+            countdownNumber.textContent = s;
+          }
+        }, 1000);
+      });
+    }
+
+    let countdownStarted = false;
+    async function startCountdownAndFullscreen() {
+      if (countdownStarted) return;
+      countdownStarted = true;
+      try {
+        await showCountdown(3);
+        if (document.fullscreenElement) return;
+        if (storyVideo.requestFullscreen) {
+          await storyVideo.requestFullscreen().catch(() => {});
+        } else if (storyVideo.webkitRequestFullscreen) {
+          storyVideo.webkitRequestFullscreen();
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+
     if (storyVideo) {
       storyVideo.volume = 0.6;
       storyVideo.muted = false;
       storyVideo.addEventListener('play', () => {
         storyVideo.volume = 0.6;
+        startCountdownAndFullscreen();
       });
       storyVideo.addEventListener('loadedmetadata', async () => {
         try {

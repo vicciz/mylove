@@ -109,6 +109,27 @@ body > * {
   text-align: center;
 }
 
+/* Countdown overlay */
+.countdown-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, rgba(10,4,20,0.65), rgba(10,4,20,0.85));
+  z-index: 60;
+}
+.countdown-number {
+  font-size: clamp(48px, 12vw, 140px);
+  color: #fff;
+  font-weight: 800;
+  background: linear-gradient(135deg, #f5d3ff, #c084fc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 8px 30px rgba(92, 30, 160, 0.45);
+}
+
 .display-page .message-card {
   border-radius: 32px;
   padding: 32px;
