@@ -32,7 +32,7 @@
 
       <!-- Contagem regressiva overlay -->
       <div id="countdown-overlay" class="countdown-overlay" hidden>
-        <div class="countdown-number">3</div>
+        <div class="countdown-number">10</div>
       </div>
 
       <section class="message-card">
@@ -108,7 +108,7 @@
       if (countdownStarted) return;
       countdownStarted = true;
       try {
-        await showCountdown(3);
+        await showCountdown(10);
         if (document.fullscreenElement) return;
         if (storyVideo.requestFullscreen) {
           await storyVideo.requestFullscreen().catch(() => {});
