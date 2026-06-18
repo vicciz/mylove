@@ -149,6 +149,7 @@ let started = false;
 let autoplayTried = false;
 let starting = false;
 let countdownPromise = null;
+let userInteractedWithVideo = false;
 
 // DOWNLOAD
 downloadVideoButton?.addEventListener("click", () => {
@@ -217,6 +218,14 @@ function showSoundFallback() {
   unmuteButton.textContent = "Tocar com som";
 }
 
+function enableSoundFromInteraction() {
+  userInteractedWithVideo = true;
+  storyVideo.muted = false;
+  storyVideo.volume = 1;
+  unmuteButton.hidden = true;
+  unmuteButton.style.display = "none";
+}
+
 function exitPlaybackMode() {
   storyVideo.classList.remove("fullscreen-video");
   unmuteButton.hidden = true;
@@ -260,6 +269,8 @@ async function startVideoWithSound() {
       await playMutedFallback();
     } catch (mutedErr) {
       console.error(mutedErr);
+      storyVideo.muted = false;
+      storyVideo.volume = 1;
       showSoundFallback();
     }
   } finally {
@@ -292,6 +303,8 @@ async function tryAutoplayWithSound() {
       await playMutedFallback();
     } catch (mutedErr) {
       console.error(mutedErr);
+      storyVideo.muted = false;
+      storyVideo.volume = 1;
       showSoundFallback();
     }
   }
@@ -306,8 +319,18 @@ if (storyVideo.readyState >= 2) {
 }
 
 storyVideo.addEventListener("click", () => {
+  enableSoundFromInteraction();
+
   if (!started) {
     startVideoWithSound();
+  }
+});
+
+storyVideo.addEventListener("pointerdown", enableSoundFromInteraction);
+storyVideo.addEventListener("touchstart", enableSoundFromInteraction, { passive: true });
+storyVideo.addEventListener("play", () => {
+  if (userInteractedWithVideo) {
+    enableSoundFromInteraction();
   }
 });
 
@@ -318,8 +341,7 @@ unmuteButton?.addEventListener("click", async () => {
 
   try {
 
-    storyVideo.muted = false;
-    storyVideo.volume = 1;
+    enableSoundFromInteraction();
     storyVideo.classList.add("fullscreen-video");
 
     await storyVideo.play();
