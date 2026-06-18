@@ -799,3 +799,14 @@ footer {
     padding: 36px 24px;
   }
 }
+
+.fullscreen-video {
+  position: fixed;
+  inset: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  object-fit: contain;
+  background: black;
+  z-index: 9998;
+  border-radius: 0 !important;
+}
