@@ -150,6 +150,7 @@ let autoplayTried = false;
 let starting = false;
 let countdownPromise = null;
 let userInteractedWithVideo = false;
+const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
 
 // DOWNLOAD
 downloadVideoButton?.addEventListener("click", () => {
@@ -218,12 +219,27 @@ function showSoundFallback() {
   unmuteButton.textContent = "Tocar com som";
 }
 
-function enableSoundFromInteraction() {
-  userInteractedWithVideo = true;
+function enableVideoSound() {
+  storyVideo.removeAttribute("muted");
+  storyVideo.defaultMuted = false;
   storyVideo.muted = false;
   storyVideo.volume = 1;
+}
+
+function enableSoundFromInteraction() {
+  userInteractedWithVideo = true;
+  enableVideoSound();
   unmuteButton.hidden = true;
   unmuteButton.style.display = "none";
+}
+
+function prepareManualPlayback() {
+  enableVideoSound();
+  storyVideo.classList.add("fullscreen-video");
+  storyVideo.pause();
+  storyVideo.currentTime = 0;
+  started = false;
+  starting = false;
 }
 
 function exitPlaybackMode() {
@@ -255,8 +271,7 @@ async function startVideoWithSound() {
     if (started) return;
 
     storyVideo.classList.add("fullscreen-video");
-    storyVideo.muted = false;
-    storyVideo.volume = 1;
+    enableVideoSound();
     storyVideo.currentTime = 0;
 
     await storyVideo.play();
@@ -265,12 +280,16 @@ async function startVideoWithSound() {
   } catch (err) {
     console.warn("Autoplay com áudio bloqueado");
 
+    if (isTouchDevice) {
+      prepareManualPlayback();
+      return;
+    }
+
     try {
       await playMutedFallback();
     } catch (mutedErr) {
       console.error(mutedErr);
-      storyVideo.muted = false;
-      storyVideo.volume = 1;
+      enableVideoSound();
       showSoundFallback();
     }
   } finally {
@@ -289,8 +308,7 @@ async function tryAutoplayWithSound() {
     if (started || starting) return;
 
     storyVideo.classList.add("fullscreen-video");
-    storyVideo.muted = false;
-    storyVideo.volume = 1;
+    enableVideoSound();
     storyVideo.currentTime = 0;
 
     await storyVideo.play();
@@ -299,12 +317,16 @@ async function tryAutoplayWithSound() {
   } catch (err) {
     console.warn("Autoplay com áudio bloqueado");
 
+    if (isTouchDevice) {
+      prepareManualPlayback();
+      return;
+    }
+
     try {
       await playMutedFallback();
     } catch (mutedErr) {
       console.error(mutedErr);
-      storyVideo.muted = false;
-      storyVideo.volume = 1;
+      enableVideoSound();
       showSoundFallback();
     }
   }
@@ -331,6 +353,8 @@ storyVideo.addEventListener("touchstart", enableSoundFromInteraction, { passive:
 storyVideo.addEventListener("play", () => {
   if (userInteractedWithVideo) {
     enableSoundFromInteraction();
+    storyVideo.classList.add("fullscreen-video");
+    started = true;
   }
 });
 
